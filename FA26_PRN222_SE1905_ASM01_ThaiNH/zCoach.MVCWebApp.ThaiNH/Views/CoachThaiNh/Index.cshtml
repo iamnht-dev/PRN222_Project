@@ -4,40 +4,90 @@
     ViewData["Title"] = "Coach Roster";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-primary fw-bold">🏋️‍♂️ Coach Roster</h2>
+<h2 class="text-primary fw-bold mb-4">🏋️‍♂️ Coach Roster</h2>
+
+<form asp-action="Index" method="get" class="mb-4 bg-light p-3 rounded shadow-sm border">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label mb-1 fw-bold">Coach Name</label>
+                <input type="text" name="fullName" value="@ViewBag.SearchName" class="form-control" placeholder="Search name..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label mb-1 fw-bold">Email</label>
+                <input type="text" name="email" value="@ViewBag.SearchEmail" class="form-control" placeholder="Search email..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label mb-1 fw-bold">Phone</label>
+                <input type="text" name="phone" value="@ViewBag.SearchPhone" class="form-control" placeholder="Search phone..." />
+            </div>
+        </div>
+        
+        <div class="col-md-3 mt-4 d-flex justify-content-between align-items-start">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-1">Clear</a>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="mb-4 text-end">
     <a asp-action="Create" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Add New Coach
+        <i class="bi bi-plus-circle"></i> Create New Coach
     </a>
 </div>
 
-<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-    @foreach (var item in Model) {
-        <div class="col">
-            <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden position-relative">
-                <span class="position-absolute top-0 end-0 badge bg-secondary m-2 rounded-pill">ID: @item.CoachThaiNhid</span>
-                <div class="bg-light text-center p-3">
+<table id="myTable" class="table table-bordered table-striped table-hover align-middle bg-white shadow-sm rounded overflow-hidden">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Avatar</th>
+            <th>Full Name</th>
+            <th>Specialization</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>@item.CoachThaiNhid</td>
+                <td>
                     <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" : item.ImageUrl)" 
                          class="rounded-circle object-fit-cover shadow-sm" 
-                         style="width: 120px; height: 120px;" 
-                         alt="Coach Image">
-                </div>
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold text-dark mb-1">@item.FullName</h5>
-                    <span class="badge bg-primary mb-3">@(item.SpecializationThaiNh?.SpecializationName ?? "General")</span>
-                    
-                    <ul class="list-unstyled text-start small mb-0">
-                        <li class="mb-1"><strong class="text-muted">Exp:</strong> @(string.IsNullOrEmpty(item.Experience) ? "N/A" : item.Experience)</li>
-                        <li class="mb-1"><strong class="text-muted">Phone:</strong> @item.Phone</li>
-                        <li class="mb-1 text-truncate"><strong class="text-muted">Email:</strong> @item.Email</li>
-                    </ul>
-                </div>
-                <div class="card-footer bg-white border-top-0 d-flex justify-content-center gap-2 pb-3">
-                    <a asp-action="Edit" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-primary px-3">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-info px-3">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-danger px-3">Delete</a>
-                </div>
-            </div>
-        </div>
-    }
-</div>
+                         style="width: 50px; height: 50px;" 
+                         alt="Avatar">
+                </td>
+                <td class="fw-bold">@item.FullName</td>
+                <td><span class="badge bg-primary">@(item.SpecializationThaiNh?.SpecializationName ?? "General")</span></td>
+                <td>@item.Phone</td>
+                <td>@item.Email</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/lib/table-pagination.js"></script>
+    <script>
+        $(function() {
+            $('#myTable').createTablePagination({
+                rowPerPage: 5,
+                paginationColor: '#0d6efd',
+                fontColor: '#555555',
+                paginationStyle: 'borderless',
+                transitionDuration: 300
+            });
+        });
+    </script>
+}

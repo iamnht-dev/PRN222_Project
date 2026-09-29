@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using zCoach.Services.ThaiNH;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,16 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ICoachThaiNhService, CoachThaiNhService>();
 builder.Services.AddScoped<ISpecializationThaiNhService, SpecializationThaiNhService>();
+builder.Services.AddScoped<ISystemUserAccountService, SystemUserAccountService>();
+
+builder.Services.AddAuthentication()
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.LoginPath = new PathString("/Account/Login");
+        options.AccessDeniedPath = new PathString("/Account/Forbidden");
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+
+    });
 
 var app = builder.Build();
 
@@ -23,11 +34,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 
 app.Run();

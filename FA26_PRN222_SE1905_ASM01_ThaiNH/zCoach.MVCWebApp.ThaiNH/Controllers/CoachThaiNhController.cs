@@ -9,8 +9,11 @@ using zCoach.Entities.ThaiNH.Models;
 using zCoach.Repositories.ThaiNH.DbContext;
 using zCoach.Services.ThaiNH;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace zCoach.MVCWebApp.ThaiNH.Controllers
 {
+    [Authorize]
     public class CoachThaiNhController : Controller
     {
         private readonly PRN222Context _context;
@@ -24,9 +27,16 @@ namespace zCoach.MVCWebApp.ThaiNH.Controllers
             _specializationThaiNhService = specializationThaiNhService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? fullName, string? email, string? phone)
         {
-            var items = await _transactionCoachService.GetAllAsync();
+            ViewBag.SearchName = fullName;
+            ViewBag.SearchEmail = email;
+            ViewBag.SearchPhone = phone;
+
+            var items = string.IsNullOrEmpty(fullName) && string.IsNullOrEmpty(email) && string.IsNullOrEmpty(phone)
+                ? await _transactionCoachService.GetAllAsync()
+                : await _transactionCoachService.SearchAsync(fullName, email, phone);
+            
             return View(items);
         }
         
