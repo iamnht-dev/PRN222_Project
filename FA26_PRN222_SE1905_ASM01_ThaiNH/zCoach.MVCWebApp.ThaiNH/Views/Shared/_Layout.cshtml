@@ -33,6 +33,17 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav ms-auto">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item d-flex align-items-center me-3">
+                                <span class="text-white-50 small">Welcome, <strong class="text-white">@Context.Request.Cookies["UserName"]</strong>!</span>
+                            </li>
+                            <li class="nav-item d-flex align-items-center">
+                                <a class="btn btn-sm btn-outline-light" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
