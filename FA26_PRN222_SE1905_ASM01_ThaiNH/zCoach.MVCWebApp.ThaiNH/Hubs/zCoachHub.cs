@@ -7,7 +7,7 @@ namespace zCoach.MVCWebApp.ThaiNH.Hubs
     public class zCoachHub : Hub
     {
         private readonly ICoachThaiNhService _coachThaiNhService;
-        
+
         public zCoachHub(ICoachThaiNhService coachThaiNhService) 
         {
             _coachThaiNhService = coachThaiNhService;
@@ -19,8 +19,13 @@ namespace zCoach.MVCWebApp.ThaiNH.Hubs
 
             if (result)
             {
-                await Clients.All.SendAsync("Receiver_DeleteICoachThaiNh", id);
+                await Clients.All.SendAsync("ReceiveCoachUpdate", "Deleted");
             }
+        }
+
+        public async Task BroadcastUpdate()
+        {
+            await Clients.All.SendAsync("ReceiveCoachUpdate", "Updated");
         }
     }
 }

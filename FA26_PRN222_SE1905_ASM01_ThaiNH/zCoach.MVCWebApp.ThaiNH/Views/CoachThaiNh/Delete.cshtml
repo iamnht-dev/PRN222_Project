@@ -109,9 +109,26 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="CoachThaiNhid" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <form id="deleteForm" onsubmit="event.preventDefault(); deleteCoach();">
+        <input type="hidden" id="CoachThaiNhid" value="@Model.CoachThaiNhid" />
+        <input type="submit" value="Delete via SignalR" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
+
+@section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        connection.start();
+
+        function deleteCoach() {
+            var id = document.getElementById("CoachThaiNhid").value;
+            connection.invoke("HubDelete_ICoachThaiNh", id).then(function () {
+                window.location.href = '@Url.Action("Index", "CoachThaiNh")';
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    </script>
+}

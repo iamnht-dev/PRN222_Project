@@ -106,4 +106,26 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        connection.start();
+
+        $("form").on("submit", function(e) {
+            e.preventDefault();
+            var form = $(this);
+            if (!form.valid()) return;
+
+            $.ajax({
+                type: "POST",
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function () {
+                    connection.invoke("BroadcastUpdate").then(function() {
+                        window.location.href = '@Url.Action("Index", "CoachThaiNh")';
+                    });
+                }
+            });
+        });
+    </script>
 }
