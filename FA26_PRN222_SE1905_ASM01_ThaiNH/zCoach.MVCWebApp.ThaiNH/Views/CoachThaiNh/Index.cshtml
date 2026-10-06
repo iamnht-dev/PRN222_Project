@@ -79,6 +79,7 @@
 
 @section Scripts {
     <script src="~/lib/table-pagination.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script>
         $(function() {
             $('#myTable').createTablePagination({
@@ -87,6 +88,19 @@
                 fontColor: '#555555',
                 paginationStyle: 'borderless',
                 transitionDuration: 300
+            });
+            
+            // SignalR for real-time updates
+            var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+            connection.on("ReceiveCoachUpdate", function (message) {
+                console.log("Coach updated: " + message);
+                // Optionally show a toast notification here
+                // Reload the page to get the updated data
+                location.reload();
+            });
+            
+            connection.start().catch(function (err) {
+                return console.error(err.toString());
             });
         });
     </script>

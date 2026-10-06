@@ -8,7 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using zCoach.Entities.ThaiNH.Models;
 using zCoach.Repositories.ThaiNH.DbContext;
 using zCoach.Services.ThaiNH;
-
+using Microsoft.AspNetCore.SignalR;
+using zCoach.MVCWebApp.ThaiNH.Hubs;
 using Microsoft.AspNetCore.Authorization;
 
 namespace zCoach.MVCWebApp.ThaiNH.Controllers
@@ -19,12 +20,14 @@ namespace zCoach.MVCWebApp.ThaiNH.Controllers
         private readonly PRN222Context _context;
         private readonly ICoachThaiNhService _transactionCoachService;
         private readonly ISpecializationThaiNhService _specializationThaiNhService;
+        private readonly IHubContext<zCoachHub> _hubContext;
 
-        public CoachThaiNhController(ICoachThaiNhService transactionCoachService, ISpecializationThaiNhService specializationThaiNhService)
+        public CoachThaiNhController(ICoachThaiNhService transactionCoachService, ISpecializationThaiNhService specializationThaiNhService, IHubContext<zCoachHub> hubContext)
         {
             _context = new PRN222Context();
             _transactionCoachService = transactionCoachService;
             _specializationThaiNhService = specializationThaiNhService;
+            _hubContext = hubContext;
         }
 
         public async Task<IActionResult> Index(string? fullName, string? email, string? phone)
@@ -73,6 +76,7 @@ namespace zCoach.MVCWebApp.ThaiNH.Controllers
             if (ModelState.IsValid)
             {
                 await _transactionCoachService.CreateAsync(coachThaiNh);
+                await _hubContext.Clients.All.SendAsync("ReceiveCoachUpdate", "Thêm mới HLV");
                 return RedirectToAction(nameof(Index));
             }
             var specializations = await _specializationThaiNhService.GetAllAsync();
@@ -105,6 +109,7 @@ namespace zCoach.MVCWebApp.ThaiNH.Controllers
                 try
                 {
                     await _transactionCoachService.UpdateAsync(coachThaiNh);
+                    await _hubContext.Clients.All.SendAsync("ReceiveCoachUpdate", "Cập nhật HLV");
                 }
                 catch (Exception ex)
                 {
@@ -134,6 +139,7 @@ namespace zCoach.MVCWebApp.ThaiNH.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _transactionCoachService.DeleteAsync(id);
+            await _hubContext.Clients.All.SendAsync("ReceiveCoachUpdate", "Xóa HLV");
             return RedirectToAction(nameof(Index));
         }
     }

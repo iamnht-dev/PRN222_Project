@@ -43,6 +43,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-app.MapHub<ChatHub>("/chatHub");
+app.MapHub<zCoachHub>("/chatHub");
 
 app.Run();
