@@ -1,8 +1,35 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold mb-4">💬 Live Chat (SignalR)</h2>
+    <div class="row p-1">
+        <div class="col-md-2">User</div>
+        <div class="col-md-5"><input type="text" class="form-control" id="userInput" value="@Context.Request.Cookies["UserName"]" /></div>
+    </div>
+    <div class="row p-1 mt-2">
+        <div class="col-md-2">Message</div>
+        <div class="col-md-5"><input type="text" class="form-control w-100" id="messageInput" /></div>
+    </div>
+    <div class="row p-1 mt-3">
+        <div class="col-md-7 text-end">
+            <input type="button" class="btn btn-primary" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+    <div class="row p-1 mt-3">
+        <div class="col-md-7">
+            <hr />
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col-md-7">
+            <ul id="messagesList" class="list-group"></ul>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+}
