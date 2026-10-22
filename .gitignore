@@ -18,3 +18,5 @@
 # Backups and temporary verification output
 assignment-backups/
 *.log
+**/Logs/
+**/publish/
