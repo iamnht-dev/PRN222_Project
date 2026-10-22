@@ -1,0 +1,93 @@
+@model IEnumerable<zCoach.Entities.ThaiNH.Models.CoachThaiNh>
+
+@{
+    ViewData["Title"] = "Coach Roster";
+}
+
+<h2 class="text-primary fw-bold mb-4">🏋️‍♂️ Coach Roster</h2>
+
+<form asp-action="Index" method="get" class="mb-4 bg-light p-3 rounded shadow-sm border">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label mb-1 fw-bold">Coach Name</label>
+                <input type="text" name="fullName" value="@ViewBag.SearchName" class="form-control" placeholder="Search name..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label mb-1 fw-bold">Email</label>
+                <input type="text" name="email" value="@ViewBag.SearchEmail" class="form-control" placeholder="Search email..." />
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label mb-1 fw-bold">Phone</label>
+                <input type="text" name="phone" value="@ViewBag.SearchPhone" class="form-control" placeholder="Search phone..." />
+            </div>
+        </div>
+        
+        <div class="col-md-3 mt-4 d-flex justify-content-between align-items-start">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-1">Clear</a>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="mb-4 text-end">
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Create New Coach
+    </a>
+</div>
+
+<table id="myTable" class="table table-bordered table-striped table-hover align-middle bg-white shadow-sm rounded overflow-hidden">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Avatar</th>
+            <th>Full Name</th>
+            <th>Specialization</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>@item.CoachThaiNhid</td>
+                <td>
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" : item.ImageUrl)" 
+                         class="rounded-circle object-fit-cover shadow-sm" 
+                         style="width: 50px; height: 50px;" 
+                         alt="Avatar">
+                </td>
+                <td class="fw-bold">@item.FullName</td>
+                <td><span class="badge bg-primary">@(item.SpecializationThaiNh?.SpecializationName ?? "General")</span></td>
+                <td>@item.Phone</td>
+                <td>@item.Email</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/lib/table-pagination.js" asp-append-version="true"></script>
+    <script>
+        $(function () {
+            $('#myTable').createTablePagination({
+                rowPerPage: 5,
+                paginationColor: '#0d6efd',
+                fontColor: '#555555',
+                paginationStyle: 'borderless',
+                transitionDuration: 300
+            });
+        });
+    </script>
+}

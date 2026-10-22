@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="zCoach.Entities.ThaiNH/zCoach.Entities.ThaiNH.csproj" />
+  <Project Path="zCoach.Repositories.ThaiNH/zCoach.Repositories.ThaiNH.csproj" />
+  <Project Path="zCoach.Services.ThaiNH/zCoach.Services.ThaiNH.csproj" />
+  <Project Path="zCoach.BlazorWebApp.ThaiNH/zCoach.BlazorWebApp.ThaiNH.csproj" />
+</Solution>

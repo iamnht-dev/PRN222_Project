@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using zCoach.Entities.ThaiNH.Models;
 
-namespace zCoach.Services.ThaiNH
+namespace zCoach.Services.ThaiNH;
+
+public interface ISpecializationThaiNhService
 {
-    public interface ISpecializationThaiNhService
-    {
-        Task<List<SpecializationThaiNh>> GetAllAsync();
-    }
+    Task<List<SpecializationThaiNh>> GetAllAsync();
 }

@@ -1,41 +1,50 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+
+using zCoach.Repositories.ThaiNH;
+using zCoach.Repositories.ThaiNH.DBContext;
 using zCoach.Services.ThaiNH;
-using zCoach.MVCWebApp.ThaiNH.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddSignalR();
+// Keep workstation credentials out of Git; environment and command line still take priority.
+builder.Configuration
+    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables()
+    .AddCommandLine(args);
 
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = "zCoach.Mvc.Session";
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/Forbidden";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
+
+builder.Services.AddDbContext<PRN222Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<CoachThaiNhRepository>();
+builder.Services.AddScoped<SpecializationThaiNhRepository>();
+builder.Services.AddScoped<SystemUserAccountRepository>();
 builder.Services.AddScoped<ICoachThaiNhService, CoachThaiNhService>();
 builder.Services.AddScoped<ISpecializationThaiNhService, SpecializationThaiNhService>();
 builder.Services.AddScoped<ISystemUserAccountService, SystemUserAccountService>();
 
-builder.Services.AddAuthentication()
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-    {
-        options.LoginPath = new PathString("/Account/Login");
-        options.AccessDeniedPath = new PathString("/Account/Forbidden");
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-
-    });
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -43,6 +52,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-app.MapHub<zCoachHub>("/chatHub");
+app.MapControllerRoute(name: "legacyCoach", pattern: "CoachThaiNh/{action=Index}/{id?}", defaults: new { controller = "Coaches" });
+
+
 
 app.Run();

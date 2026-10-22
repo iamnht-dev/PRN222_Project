@@ -1,0 +1,20 @@
+# Build outputs and IDE state
+**/[Bb]in/
+**/[Oo]bj/
+**/.vs/
+**/node_modules/
+*.user
+*.suo
+*.rsuser
+
+# Machine-specific configuration and secrets
+**/appsettings.Local.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+
+# Backups and temporary verification output
+assignment-backups/
+*.log

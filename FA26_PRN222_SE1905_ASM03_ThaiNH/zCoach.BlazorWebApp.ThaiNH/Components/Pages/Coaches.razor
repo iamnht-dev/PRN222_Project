@@ -1,0 +1,331 @@
+@page "/coaches"
+@rendermode InteractiveServer
+@inject ICoachThaiNhService CoachService
+@inject ISpecializationThaiNhService SpecializationService
+@inject IJSRuntime JS
+
+<PageTitle>Coaches · ASM3</PageTitle>
+
+<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Coaches</h1>
+        <p class="text-muted mb-0">Blazor CRUD · tìm kiếm 3 tiêu chí · phân trang jQuery.</p>
+    </div>
+    <button type="button" class="btn btn-primary" @onclick="() => ShowForm(null)">
+        Create New
+    </button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <div class="alert @(isError ? "alert-danger" : "alert-success") alert-dismissible fade show" role="alert">
+        @message
+        <button type="button" class="btn-close" @onclick="() => message = null" aria-label="Close"></button>
+    </div>
+}
+
+<form class="card card-body shadow-sm mb-3" @onsubmit="SearchAsync" @onsubmit:preventDefault>
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label" for="searchFullName">Họ tên Coach</label>
+            <input id="searchFullName" class="form-control" @bind="fullName" placeholder="VD: Nguyễn Văn An" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="searchEmail">Email</label>
+            <input id="searchEmail" class="form-control" @bind="email" placeholder="coach@example.com" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="searchPhone">Số điện thoại</label>
+            <input id="searchPhone" class="form-control" @bind="phone" placeholder="0901234567" />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+            <button type="button" class="btn btn-outline-secondary" @onclick="ClearSearchAsync">Xoá lọc</button>
+        </div>
+    </div>
+</form>
+
+@if (showForm)
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">@(editing ? $"Edit #{model.CoachThaiNhid}" : "Create Coach")</h2>
+            <button type="button" class="btn-close" @onclick="CloseForm" aria-label="Close"></button>
+        </div>
+        <div class="card-body">
+            <EditForm Model="model" OnValidSubmit="SaveAsync">
+                <DataAnnotationsValidator />
+                <div class="text-danger mb-2">
+                    <ValidationSummary />
+                </div>
+
+<div class="row g-3"><div class="col-md-6"><label class="form-label">Full name</label><InputText @bind-Value="model.FullName" class="form-control" /><ValidationMessage For="() => model.FullName" /></div>
+<div class="col-md-6"><label class="form-label">Email</label><InputText @bind-Value="model.Email" class="form-control" /><ValidationMessage For="() => model.Email" /></div>
+<div class="col-md-6"><label class="form-label">Phone</label><InputText @bind-Value="model.Phone" class="form-control" /><ValidationMessage For="() => model.Phone" /></div>
+<div class="col-md-6"><label class="form-label">Date of birth</label><InputDate @bind-Value="model.DateOfBirth" class="form-control" /><ValidationMessage For="() => model.DateOfBirth" /></div>
+<div class="col-md-6"><label class="form-label">Gender</label><InputText @bind-Value="model.Gender" class="form-control" /><ValidationMessage For="() => model.Gender" /></div>
+<div class="col-md-6"><label class="form-label">Address</label><InputText @bind-Value="model.Address" class="form-control" /><ValidationMessage For="() => model.Address" /></div>
+<div class="col-md-6"><label class="form-label">Image URL</label><InputText @bind-Value="model.ImageUrl" class="form-control" /><ValidationMessage For="() => model.ImageUrl" /></div>
+<div class="col-md-6"><label class="form-label">Experience</label><InputText @bind-Value="model.Experience" class="form-control" /><ValidationMessage For="() => model.Experience" /></div>
+<div class="col-md-6"><label class="form-label">Certification</label><InputText @bind-Value="model.Certification" class="form-control" /><ValidationMessage For="() => model.Certification" /></div>
+<div class="col-md-6"><label class="form-label">Salary</label><InputNumber @bind-Value="model.Salary" class="form-control" /><ValidationMessage For="() => model.Salary" /></div>
+<div class="col-md-6"><label class="form-label">Hire date</label><InputDate @bind-Value="model.HireDate" class="form-control" /><ValidationMessage For="() => model.HireDate" /></div>
+<div class="col-md-6"><label class="form-label">Status</label><InputNumber @bind-Value="model.Status" class="form-control" /><ValidationMessage For="() => model.Status" /></div>
+<div class="col-md-6"><label class="form-label">Publish date</label><InputDate @bind-Value="model.PublishDate" class="form-control" /><ValidationMessage For="() => model.PublishDate" /></div><div class="col-md-6"><label>Specialization</label><InputSelect TValue="int?" @bind-Value="model.SpecializationThaiNhid" class="form-select"><option value="">-- Select --</option>@foreach(var specialization in specializations){<option value="@specialization.SpecializationThaiNhid">@specialization.SpecializationName</option>}</InputSelect></div><div class="col-md-6"><label><InputCheckbox @bind-Value="model.IsActive" /> Active</label></div></div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        @(editing ? "Save changes" : "Create")
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" @onclick="CloseForm">Huỷ</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table id="coachTable" class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Coach</th>
+                    <th>Liên hệ</th>
+                    <th>Lương / Ngày tuyển</th>
+                    <th>Chuyên môn</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (items.Count == 0)
+                {
+                    <tr class="js-empty-row">
+                        <td colspan="6" class="text-center text-muted py-4">Không có dữ liệu phù hợp.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in items)
+                    {
+                        <tr>
+<td>@item.FullName</td><td>@item.Email<br />@item.Phone</td><td>@item.Salary?.ToString("N0")<br />@item.HireDate?.ToString("dd/MM/yyyy")</td><td>@item.SpecializationThaiNh?.SpecializationName</td><td>Status: @item.Status / Active: @item.IsActive</td>
+                            <td class="text-end">
+                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                            @onclick="() => ShowForm(item)">
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            @onclick="() => DeleteAsync(item)">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer bg-white">
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <label for="feePageSize" class="small text-muted mb-0">Số dòng/trang</label>
+                <select id="feePageSize" class="form-select form-select-sm" style="width:auto">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            <div id="feePageInfo" class="small text-muted"></div>
+            <nav id="feePager" aria-label="Phân trang"></nav>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<CoachThaiNh> items = new();
+    private List<SpecializationThaiNh> specializations = new();
+    private CoachThaiNh model = new();
+    private bool showForm;
+    private bool editing;
+    private bool needsPagination;
+    private string? fullName;
+    private string? email;
+    private string? phone;
+    private string? message;
+    private bool isError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            specializations = await SpecializationService.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            SetError("Không tải được danh sách chuyên môn: " + ex.Message);
+        }
+
+        await SearchAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!needsPagination)
+        {
+            return;
+        }
+
+        needsPagination = false;
+
+        try
+        {
+            await JS.InvokeVoidAsync("tablePagination.init", new
+            {
+                table = "#coachTable",
+                pager = "#feePager",
+                info = "#feePageInfo",
+                pageSizeSelector = "#feePageSize",
+                pageSize = 10
+            });
+        }
+        catch (JSDisconnectedException)
+        {
+            // Circuit đã đóng, bỏ qua.
+        }
+    }
+
+    private async Task SearchAsync()
+    {
+        try
+        {
+            items = await CoachService.SearchAsync(fullName, email, phone);
+            needsPagination = true;
+            isError = false;
+        }
+        catch (Exception ex)
+        {
+            SetError("Lỗi tìm kiếm: " + ex.Message);
+        }
+    }
+
+    private async Task ClearSearchAsync()
+    {
+        fullName = null;
+        email = null;
+        phone = null;
+        await SearchAsync();
+    }
+
+    private void ShowForm(CoachThaiNh? item)
+    {
+        editing = item is not null;
+        showForm = true;
+
+        model = item is null
+            ? new CoachThaiNh
+            {
+
+                PublishDate = DateTime.Today,
+                IsActive = true
+            }
+            : new CoachThaiNh
+            {
+                CoachThaiNhid = item.CoachThaiNhid,
+                FullName = item.FullName,
+                Email = item.Email,
+                Phone = item.Phone,
+                DateOfBirth = item.DateOfBirth,
+                Gender = item.Gender,
+                Address = item.Address,
+                ImageUrl = item.ImageUrl,
+                Experience = item.Experience,
+                Certification = item.Certification,
+                Salary = item.Salary,
+                HireDate = item.HireDate,
+                Status = item.Status,
+                PublishDate = item.PublishDate,
+                SpecializationThaiNhid = item.SpecializationThaiNhid,
+                IsActive = item.IsActive
+            };
+    }
+
+    private void CloseForm()
+    {
+        showForm = false;
+        editing = false;
+        model = new CoachThaiNh();
+    }
+
+    private async Task SaveAsync()
+    {
+        try
+        {
+            if (editing)
+            {
+                var updated = await CoachService.UpdateAsync(model);
+                if (!updated)
+                {
+                    SetError("Không tìm thấy Coach cần cập nhật.");
+                    return;
+                }
+
+                message = $"Đã cập nhật Coach #{model.CoachThaiNhid}.";
+            }
+            else
+            {
+                var created = await CoachService.CreateAsync(model);
+                message = $"Đã tạo Coach #{created.CoachThaiNhid} cho \"{created.FullName}\".";
+            }
+
+            isError = false;
+            showForm = false;
+            editing = false;
+            model = new CoachThaiNh();
+            await SearchAsync();
+        }
+        catch (Exception ex)
+        {
+            SetError("Lỗi lưu dữ liệu: " + ex.Message);
+        }
+    }
+
+    private async Task DeleteAsync(CoachThaiNh item)
+    {
+        var confirmed = await JS.InvokeAsync<bool>(
+            "confirm",
+            $"Xoá Coach #{item.CoachThaiNhid} của \"{item.FullName}\"?");
+
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            var deleted = await CoachService.DeleteAsync(item.CoachThaiNhid);
+            if (deleted)
+            {
+                message = $"Đã xoá Coach #{item.CoachThaiNhid}.";
+                isError = false;
+                await SearchAsync();
+            }
+            else
+            {
+                SetError("Không tìm thấy Coach cần xoá.");
+            }
+        }
+        catch (Exception ex)
+        {
+            SetError("Lỗi xoá dữ liệu: " + ex.Message);
+        }
+    }
+
+    private void SetError(string text)
+    {
+        message = text;
+        isError = true;
+    }
+}

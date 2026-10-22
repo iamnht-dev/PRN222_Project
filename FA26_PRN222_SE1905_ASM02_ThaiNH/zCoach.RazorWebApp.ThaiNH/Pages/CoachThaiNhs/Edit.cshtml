@@ -1,0 +1,32 @@
+@page
+@model zCoach.RazorWebApp.ThaiNH.Pages.CoachThaiNhs.EditModel
+@{
+    ViewData["Title"] = "Edit Coach";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="h3 mb-1">Edit Coach #@Model.Coach.CoachThaiNhid</h1>
+        <p class="text-muted mb-0">Cập nhật bằng Razor Pages.</p>
+    </div>
+    <a asp-page="Index" class="btn btn-outline-secondary">Quay lại</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <input type="hidden" asp-for="Coach.CoachThaiNhid" />
+            <partial name="_FormFields" model="Model" />
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a asp-page="./Details" asp-route-id="@Model.Coach.CoachThaiNhid"
+                   class="btn btn-outline-secondary">Details</a>
+                <a asp-page="Index" class="btn btn-outline-secondary">Huỷ</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

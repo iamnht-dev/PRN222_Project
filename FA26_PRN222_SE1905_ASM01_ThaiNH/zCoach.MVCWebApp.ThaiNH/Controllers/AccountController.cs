@@ -1,74 +1,49 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using zCoach.MVCWebApp.ThaiNH.Models;
 using zCoach.Services.ThaiNH;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 
-namespace zCoach.MVCWebApp.ThaiNH.Controllers
+namespace zCoach.MVCWebApp.ThaiNH.Controllers;
+
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly ISystemUserAccountService _accounts;
+
+    public AccountController(ISystemUserAccountService accounts) => _accounts = accounts;
+
+    public IActionResult Login() => View(new LoginRequest());
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login(LoginRequest request)
     {
-        private readonly ISystemUserAccountService _userAccountService;
+        if (!ModelState.IsValid) return View(request);
 
-        public AccountController(ISystemUserAccountService systemUserAccountService) => _userAccountService = systemUserAccountService; 
-
-        public IActionResult Index()
+        var account = await _accounts.GetUserAccountAsync(request.UserName, request.Password);
+        if (account is null)
         {
-            return RedirectToAction("Login");
+            ModelState.AddModelError(string.Empty, "Invalid username or password.");
+            return View(request);
         }
 
-        public IActionResult Login()
+        var identity = new ClaimsIdentity(new[]
         {
-            return View();
-        }
+            new Claim(ClaimTypes.NameIdentifier, account.UserAccountId.ToString()),
+            new Claim(ClaimTypes.Name, account.UserName),
+            new Claim(ClaimTypes.Role, account.RoleId.ToString())
+        }, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        [HttpPost]
-        public async Task<IActionResult> Login(Models.LoginRequest request)
-        {
-            try
-            {
-                var userAccount = await _userAccountService.GetUserAccount(request.UserName, request.Password);
-
-                if (userAccount != null)
-                {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, userAccount.UserName),
-                        new Claim(ClaimTypes.Role, userAccount.RoleId.ToString())
-                    };
-
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-
-                    Response.Cookies.Append("UserName", userAccount.FullName);
-                    Response.Cookies.Append("Role", userAccount.RoleId.ToString());
-
-                    return RedirectToAction("Index", "CoachThaiNh");
-                }                
-            }
-            catch (Exception)
-            {
-            }
-
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            ModelState.AddModelError("", "Login failure");
-            return View();
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            Response.Cookies.Delete("UserName");
-            Response.Cookies.Delete("Role");
-            return RedirectToAction("Login", "Account");
-        }
-
-        public async Task<IActionResult> Forbidden()
-        {
-            return View();
-        }
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+        return RedirectToAction("Index", "Coaches");
     }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction(nameof(Login));
+    }
+
+    public IActionResult Forbidden() => View();
 }

@@ -1,0 +1,39 @@
+@inherits LayoutComponentBase
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-primary bg-gradient border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand" href="">ASM3 · Blazor Server</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">Home</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-white" href="coaches">Coaches</NavLink>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="container pb-3">
+    @Body
+</main>
+
+<footer class="border-top footer text-muted bg-white mt-4">
+    <div class="container py-2">
+        &copy; 2026 - FA26_PRN222_SE1905_ASM03_ThaiNH - Blazor WebApp
+    </div>
+</footer>
+
+<div id="blazor-error-ui">
+    Đã xảy ra lỗi không mong muốn.
+    <a href="" class="reload">Tải lại</a>
+    <a class="dismiss">×</a>
+</div>

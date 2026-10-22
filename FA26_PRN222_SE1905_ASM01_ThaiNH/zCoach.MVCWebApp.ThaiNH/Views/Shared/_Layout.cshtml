@@ -24,10 +24,7 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="CoachThaiNh" asp-action="Index">Coaches</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="SpecializationThaiNh" asp-action="Index">Specializations</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Coaches" asp-action="Index">Coaches</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -37,11 +34,15 @@
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item d-flex align-items-center me-3">
-                                <span class="text-white-50 small">Welcome, <strong class="text-white">@Context.Request.Cookies["UserName"]</strong>!</span>
+                                <span class="text-white-50 small">Welcome, <strong class="text-white">@User.Identity.Name</strong>!</span>
                             </li>
                             <li class="nav-item d-flex align-items-center">
-                                <a class="btn btn-sm btn-outline-light" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                <form asp-controller="Account" asp-action="Logout" method="post"><button class="btn btn-sm btn-outline-light" type="submit">Logout</button></form>
                             </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="btn btn-sm btn-outline-light" asp-controller="Account" asp-action="Login">Login</a></li>
                         }
                     </ul>
                 </div>

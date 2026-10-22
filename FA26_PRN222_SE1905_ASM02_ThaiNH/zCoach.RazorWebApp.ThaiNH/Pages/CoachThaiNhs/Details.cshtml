@@ -1,0 +1,15 @@
+@page
+@model zCoach.RazorWebApp.ThaiNH.Pages.CoachThaiNhs.DetailsModel
+<h1>Details Coach</h1><dl class="row"><dt class="col-sm-3">Full name</dt><dd class="col-sm-9">@Model.Coach.FullName</dd>
+<dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Coach.Email</dd>
+<dt class="col-sm-3">Phone</dt><dd class="col-sm-9">@Model.Coach.Phone</dd>
+<dt class="col-sm-3">Date of birth</dt><dd class="col-sm-9">@Model.Coach.DateOfBirth</dd>
+<dt class="col-sm-3">Gender</dt><dd class="col-sm-9">@Model.Coach.Gender</dd>
+<dt class="col-sm-3">Address</dt><dd class="col-sm-9">@Model.Coach.Address</dd>
+<dt class="col-sm-3">Image URL</dt><dd class="col-sm-9">@Model.Coach.ImageUrl</dd>
+<dt class="col-sm-3">Experience</dt><dd class="col-sm-9">@Model.Coach.Experience</dd>
+<dt class="col-sm-3">Certification</dt><dd class="col-sm-9">@Model.Coach.Certification</dd>
+<dt class="col-sm-3">Salary</dt><dd class="col-sm-9">@Model.Coach.Salary</dd>
+<dt class="col-sm-3">Hire date</dt><dd class="col-sm-9">@Model.Coach.HireDate</dd>
+<dt class="col-sm-3">Status</dt><dd class="col-sm-9">@Model.Coach.Status</dd>
+<dt class="col-sm-3">Publish date</dt><dd class="col-sm-9">@Model.Coach.PublishDate</dd><dt class="col-sm-3">Specialization</dt><dd class="col-sm-9">@(Model.Coach.SpecializationThaiNh?.SpecializationName ?? "-")</dd><dt class="col-sm-3">Active</dt><dd class="col-sm-9">@Model.Coach.IsActive</dd><dt class="col-sm-3">Updated</dt><dd class="col-sm-9">@Model.Coach.UpdateAt</dd></dl><a asp-page="Index">Back</a>

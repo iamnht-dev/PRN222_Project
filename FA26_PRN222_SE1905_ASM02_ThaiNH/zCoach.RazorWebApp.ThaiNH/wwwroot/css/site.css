@@ -1,0 +1,53 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.app-gradient-bg {
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(13, 110, 253, 0.18), rgba(32, 201, 151, 0.16)),
+    linear-gradient(180deg, #f8fbff 0%, #eef5ff 48%, #f7fbf8 100%);
+}
+
+.app-content {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 0.5rem;
+  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08);
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+}
+
+.compact-form .form-label {
+  color: #495057;
+  font-size: 0.86rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}

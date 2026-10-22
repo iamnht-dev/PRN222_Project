@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using zCoach.Entities.ThaiNH.Models;
 using zCoach.Repositories.ThaiNH.Base;
-using zCoach.Repositories.ThaiNH.DbContext;
+using zCoach.Repositories.ThaiNH.DBContext;
+namespace zCoach.Repositories.ThaiNH;
 
-namespace zCoach.Repositories.ThaiNH
+public class SpecializationThaiNhRepository : GenericRepository<SpecializationThaiNh>
 {
-    public class SpecializationThaiNhRepository : GenericRepository<SpecializationThaiNh>
-    {
-        public SpecializationThaiNhRepository() => _context ??= new PRN222Context();
-        public SpecializationThaiNhRepository(PRN222Context context) => _context = context;
-    }
+    public SpecializationThaiNhRepository(PRN222Context context) : base(context) { }
+    public override Task<List<SpecializationThaiNh>> GetAllAsync() => _context.SpecializationThaiNhs.OrderBy(x => x.SpecializationName).ToListAsync();
 }

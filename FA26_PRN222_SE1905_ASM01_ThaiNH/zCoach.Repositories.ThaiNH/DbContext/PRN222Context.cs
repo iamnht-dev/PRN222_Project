@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using zCoach.Entities.ThaiNH.Models;
-namespace zCoach.Repositories.ThaiNH.DbContext;
+namespace zCoach.Repositories.ThaiNH.DBContext;
 
 public partial class PRN222Context : Microsoft.EntityFrameworkCore.DbContext
 {
@@ -29,6 +29,7 @@ public partial class PRN222Context : Microsoft.EntityFrameworkCore.DbContext
         var config = new ConfigurationBuilder()
             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
             .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.Local.json", optional: true)
             .Build();
 
         string connectionString = config.GetConnectionString(connectionStringName);
@@ -36,11 +37,10 @@ public partial class PRN222Context : Microsoft.EntityFrameworkCore.DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(GetConnectionString("DefaultConnection")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-
-    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-    //        => optionsBuilder.UseSqlServer("Data Source=NHT\\NHT;Initial Catalog=PRN222;Persist Security Info=True;User ID=sa;Password=12345;Encrypt=False");
+    {
+        if (!optionsBuilder.IsConfigured) optionsBuilder.UseSqlServer(GetConnectionString("DefaultConnection"));
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
