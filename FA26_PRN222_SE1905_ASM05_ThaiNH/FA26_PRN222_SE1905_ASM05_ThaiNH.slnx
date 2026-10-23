@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="zCoach.TCPClient.ThaiNH/zCoach.TCPClient.ThaiNH.csproj" />
+  <Project Path="zCoach.TCPServer.ThaiNH/zCoach.TCPServer.ThaiNH.csproj" />
+</Solution>
