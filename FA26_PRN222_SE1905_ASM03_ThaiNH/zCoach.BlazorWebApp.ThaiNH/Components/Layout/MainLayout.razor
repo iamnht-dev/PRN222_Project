@@ -17,6 +17,18 @@
                         <NavLink class="nav-link text-white" href="coaches">Coaches</NavLink>
                     </li>
                 </ul>
+                <AuthorizeView>
+                    <Authorized>
+                        <span class="text-white me-3">Hello, @context.User.Identity?.Name</span>
+                        <form method="post" action="Account/Logout" data-enhance="false">
+                            <AntiforgeryToken />
+                            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                        </form>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a class="btn btn-outline-light btn-sm" href="Account/Login" data-enhance-nav="false">Login</a>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
         </div>
     </nav>
