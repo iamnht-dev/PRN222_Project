@@ -1,3 +1,8 @@
 @page
 @model zCoach.RazorWebApp.ThaiNH.Pages.IndexModel
-<h1>ASM02 · Coach Razor Pages</h1><p>Cookie login, Coach CRUD, three search criteria and jQuery pagination.</p><a class="btn btn-primary" asp-page="/CoachThaiNhs/Index">Manage Coaches</a>
+@{ ViewData["Title"] = "Home"; }
+<div class="container mt-4">
+    <h2 class="text-primary fw-bold mb-3">Coach Management</h2>
+    <p>Manage coach profiles, specializations and contact information.</p>
+    <a asp-page="/CoachThaiNhs/Index" class="btn btn-primary">View Coach Roster</a>
+</div>

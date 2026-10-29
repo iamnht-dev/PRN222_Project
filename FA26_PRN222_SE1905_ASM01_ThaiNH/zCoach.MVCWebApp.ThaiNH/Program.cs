@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using zCoach.MVCWebApp.ThaiNH.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 using zCoach.Repositories.ThaiNH;
@@ -14,6 +15,7 @@ builder.Configuration
     .AddCommandLine(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -55,5 +57,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(name: "legacyCoach", pattern: "CoachThaiNh/{action=Index}/{id?}", defaults: new { controller = "Coaches" });
 
 
+
+app.MapHub<CoachHub>("/coachHub");
 
 app.Run();

@@ -1,38 +1,73 @@
 @page
 @model zCoach.RazorWebApp.ThaiNH.Pages.Account.LoginModel
+
 @{
-    ViewData["Title"] = "Login";
+    Layout = null;
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h1 class="h4 mb-3">Đăng nhập</h1>
-                <form method="post">
-                    <input type="hidden" asp-for="Input.ReturnUrl" />
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                    <div class="mb-3">
-                        <label asp-for="Input.UserName" class="form-label"></label>
-                        <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
-                        <span asp-validation-for="Input.UserName" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Input.Password" class="form-label"></label>
-                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
-                        <span asp-validation-for="Input.Password" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
-                </form>
-                <p class="text-muted small mt-3 mb-0">Dùng tài khoản đang hoạt động trong hệ thống Coach.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - zCoach.RazorWebApp.ThaiNH</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/zCoach.RazorWebApp.ThaiNH.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-page="/Index">zCoach.RazorWebApp.ThaiNH - <span class="text-danger">PRN222</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
-        </div>
-    </div>
-</div>
+        </nav>
+    </header>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="row text-center">
+                <h1 class="display-4">Login</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                </div>
+                <div class="col-md-4">
+                    <form method="post">
+                        <input type="hidden" asp-for="Input.ReturnUrl" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Input.UserName" class="control-label"></label>
+                            <input asp-for="Input.UserName" class="form-control" />
+                            <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.Password" class="control-label"></label>
+                            <input type="password" asp-for="Input.Password" class="form-control" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Login" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-center">
+        <div class="container">
+            &copy; 2026 - zCoach - ThaiNH
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

@@ -1,14 +1,14 @@
 @inherits LayoutComponentBase
 
 <header>
-    <nav class="navbar navbar-expand-sm navbar-dark bg-primary bg-gradient border-bottom box-shadow mb-3">
-        <div class="container">
-            <a class="navbar-brand" href="">ASM3 · Blazor Server</a>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold" href="">🏋️‍♂️ zCoach App</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                     aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="mainNav">
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="mainNav">
                 <ul class="navbar-nav flex-grow-1">
                     <li class="nav-item">
                         <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">Home</NavLink>
@@ -16,10 +16,11 @@
                     <li class="nav-item">
                         <NavLink class="nav-link text-white" href="coaches">Coaches</NavLink>
                     </li>
+                <li class="nav-item"><NavLink class="nav-link text-white" href="privacy">Privacy</NavLink></li>
                 </ul>
                 <AuthorizeView>
                     <Authorized>
-                        <span class="text-white me-3">Hello, @context.User.Identity?.Name</span>
+                        <span class="text-white-50 small me-3">Welcome, <strong class="text-white">@context.User.Identity?.Name</strong>!</span>
                         <form method="post" action="Account/Logout" data-enhance="false">
                             <AntiforgeryToken />
                             <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
@@ -38,9 +39,9 @@
     @Body
 </main>
 
-<footer class="border-top footer text-muted bg-white mt-4">
-    <div class="container py-2">
-        &copy; 2026 - FA26_PRN222_SE1905_ASM03_ThaiNH - Blazor WebApp
+<footer class="border-top footer text-muted">
+    <div class="container">
+        &copy; 2026 - zCoach.BlazorWebApp.ThaiNH - <a href="privacy">Privacy</a>
     </div>
 </footer>
 

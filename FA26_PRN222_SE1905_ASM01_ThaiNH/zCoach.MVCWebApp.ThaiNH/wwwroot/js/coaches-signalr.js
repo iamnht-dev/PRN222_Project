@@ -20,7 +20,7 @@
         document.querySelectorAll("#btnSignalRCreate,.btn-sr-edit,.btn-sr-delete").forEach(button => button.disabled = !ready);
     }
 
-    // Like Quang's new ASM02: keep GET filters and refresh every connected tab after a mutation.
+    // Preserve current filters when connected roster pages refresh after a change.
     function scheduleReload() {
         if (reloadScheduled) return;
         reloadScheduled = true;
@@ -65,7 +65,7 @@
     }
 
     createButton.addEventListener("click", () => fillForm(null));
-    document.querySelector("#coachTable tbody").addEventListener("click", async event => {
+    document.querySelector("#myTable tbody").addEventListener("click", async event => {
         const edit = event.target.closest(".btn-sr-edit");
         const remove = event.target.closest(".btn-sr-delete");
         if (!edit && !remove) return;

@@ -1,23 +1,24 @@
-﻿# ASM02 — Coach Razor Pages + SignalR
+# ASM02 — Coach Razor Pages
 
-Đối chiếu main Quang commit `abf7d2e` ngày 22/10/2026. Giữ Entities → Repositories → Services → RazorWebApp, login cookie và giao diện Coach của ThaiNH; thêm `Hubs/CoachHub.cs`, DTO, `wwwroot/js/coaches-signalr.js` và các nút SignalR cạnh CRUD Razor Pages.
+Kiến trúc Entities → Repositories → Services → RazorWebApp. Bài này chỉ dùng Razor Pages CRUD, không tích hợp SignalR. Giữ giao diện giống ASM01 và login/logout cookie hiện có.
+
+Visual Studio Community: mở solution `.slnx`, chọn `zCoach.RazorWebApp.ThaiNH` làm Startup Project, Ctrl+F5. Đăng nhập bằng tài khoản SQL đang hoạt động rồi vào `/CoachThaiNhs`.
 
 ```powershell
 dotnet build FA26_PRN222_SE1905_ASM02_ThaiNH.slnx
 dotnet run --project zCoach.RazorWebApp.ThaiNH --no-launch-profile --urls http://localhost:5294
 ```
 
-Visual Studio Community: chọn RazorWebApp làm Startup Project. Mở `/CoachThaiNhs`, đăng nhập bằng tài khoản đang có trong database của bạn.
+## Demo
 
-## Test hai tab
+1. Login → Coaches → Create New Coach.
+2. Thử bỏ trống FullName để xem validation, rồi nhập đúng và lưu.
+3. Details → Edit tên/lương → Save.
+4. Search theo tên/email/phone, Clear và thử phân trang.
+5. Delete đúng Coach demo → Logout.
 
-1. Hai tab cùng `/CoachThaiNhs`, cùng tài khoản được, đợi `Live updates connected.`.
-2. Tab A: SignalR Create → nhập Coach demo, chọn chuyên môn → Create via SignalR.
-3. Cả hai tab nhận CoachChanged rồi tự tải lại khoảng 0,7 giây; dữ liệu giữ ở SQL Server.
-4. Tab B: SignalR Edit → đổi lương → Update via SignalR → kiểm tra tab kia.
-5. SignalR Delete trên đúng Coach demo → xác nhận → cả hai tab mất dòng đó.
-6. CRUD thường, tìm kiếm AND ba tiêu chí, phân trang, validation, logout vẫn dùng như trước.
+Các form xử lý HTTP GET/POST qua PageModel; lưu xong chuyển về danh sách. Nếu mở hai cửa sổ thì cửa sổ thứ hai cần F5 để thấy dữ liệu mới. Phần realtime nằm ở ASM01.
 
-Hub `/coachHub` có `[Authorize]`, gọi service qua DI. Client gọi GetAll/GetById/GetSpecializations/Create/Update/Delete, server phát CoachChanged. Đây là CRUD realtime theo main Quang, không phải chat. Các bộ lọc GET được giữ khi tự tải lại; bản ghi không khớp lọc sẽ không xuất hiện.
+Cấu hình máy cá nhân nằm trong `appsettings.Local.json` (không đưa lên Git). Đã gỡ Hub, endpoint `/coachHub`, JavaScript và toàn bộ nút/popup SignalR khỏi ASM02.
 
-Đã build 0 warning/error và kiểm tra hai client WebSocket có cookie đăng nhập, CRUD SQL, broadcast tới client thứ hai, repeated update, DateOnly, search, validation và chặn anonymous. Form Razor thường/login/logout/antiforgery cũng qua kiểm tra. Chưa kiểm tra click/modal/phân trang bằng browser tự động; cần bấm thử trước demo. Các bản ghi thử đã được dọn, không reset database.
+Kiểm tra: build 0 warning/error; login/logout, validation, Create/Details/Edit/Search/Delete với SQL thật đã qua. Đã xác nhận endpoint Hub và client script cũ trả 404. Dữ liệu thử đã xoá. Chưa kiểm tra click/phân trang trực quan bằng trình duyệt.

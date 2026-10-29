@@ -21,27 +21,53 @@ body {
   margin-bottom: 60px;
 }
 
-.app-gradient-bg {
-  min-height: 100vh;
-  background:
-    linear-gradient(135deg, rgba(13, 110, 253, 0.18), rgba(32, 201, 151, 0.16)),
-    linear-gradient(180deg, #f8fbff 0%, #eef5ff 48%, #f7fbf8 100%);
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
 }
 
-.app-content {
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 0.5rem;
-  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.08);
-  margin-bottom: 1.5rem;
-  padding: 1rem 1.25rem;
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
 }
 
-.compact-form .form-label {
-  color: #495057;
-  font-size: 0.86rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
+a {
+  color: #0077cc;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
 }
 
 .footer {

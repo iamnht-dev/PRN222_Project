@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
+using zCoach.MVCWebApp.ThaiNH.Hubs;
 using zCoach.Entities.ThaiNH.Models;
 using zCoach.Services.ThaiNH;
 
@@ -11,13 +13,16 @@ public class CoachesController : Controller
 {
     private readonly ICoachThaiNhService _coachService;
     private readonly ISpecializationThaiNhService _specializationService;
+    private readonly IHubContext<CoachHub> _hub;
 
     public CoachesController(
         ICoachThaiNhService coachService,
-        ISpecializationThaiNhService specializationService)
+        ISpecializationThaiNhService specializationService,
+        IHubContext<CoachHub> hub)
     {
         _coachService = coachService;
         _specializationService = specializationService;
+        _hub = hub;
     }
 
     // GET: /Coaches?fullName=...&email=...&phone=...
@@ -64,6 +69,7 @@ public class CoachesController : Controller
         }
 
         await _coachService.CreateAsync(coach);
+        await BroadcastChangedAsync("created", coach.FullName);
         TempData["Success"] = $"Đã tạo Coach cho \"{coach.FullName}\".";
         return RedirectToAction(nameof(Index));
     }
@@ -103,6 +109,7 @@ public class CoachesController : Controller
             return NotFound();
         }
 
+        await BroadcastChangedAsync("updated", coach.FullName);
         TempData["Success"] = $"Đã cập nhật Coach #{coach.CoachThaiNhid}.";
         return RedirectToAction(nameof(Index));
     }
@@ -118,11 +125,20 @@ public class CoachesController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var deleted = await _coachService.DeleteAsync(id);
+        if (deleted) await BroadcastChangedAsync("deleted", $"#{id}");
         TempData[deleted ? "Success" : "Error"] = deleted
             ? $"Đã xoá Coach #{id}."
             : $"Không tìm thấy Coach #{id}.";
         return RedirectToAction(nameof(Index));
     }
+
+    private Task BroadcastChangedAsync(string action, string fullName)
+        => _hub.Clients.All.SendAsync("CoachChanged", new
+        {
+            Action = action,
+            FullName = fullName,
+            ChangedAt = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy")
+        });
 
     private async Task LoadSpecializationsAsync(int? selectedId = null)
     {

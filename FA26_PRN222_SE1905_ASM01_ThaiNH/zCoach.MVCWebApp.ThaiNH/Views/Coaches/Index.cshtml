@@ -5,6 +5,7 @@
 }
 
 <h2 class="text-primary fw-bold mb-4">🏋️‍♂️ Coach Roster</h2>
+<p id="hubStatus" class="text-muted" role="status">Connecting to live updates...</p>
 
 <form asp-action="Index" method="get" class="mb-4 bg-light p-3 rounded shadow-sm border">
     <div class="row">
@@ -39,6 +40,7 @@
     <a asp-action="Create" class="btn btn-success">
         <i class="bi bi-plus-circle"></i> Create New Coach
     </a>
+    <button type="button" id="btnSignalRCreate" class="btn btn-outline-success" disabled>SignalR Create</button>
 </div>
 
 <table id="myTable" class="table table-bordered table-striped table-hover align-middle bg-white shadow-sm rounded overflow-hidden">
@@ -71,13 +73,53 @@
                     <a asp-action="Edit" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-primary">Edit</a>
                     <a asp-action="Details" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-info">Details</a>
                     <a asp-action="Delete" asp-route-id="@item.CoachThaiNhid" class="btn btn-sm btn-outline-danger">Delete</a>
+                    <button type="button" class="btn btn-sm btn-outline-success btn-sr-edit" data-id="@item.CoachThaiNhid" disabled>SignalR Edit</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-sr-delete" data-id="@item.CoachThaiNhid" disabled>SignalR Delete</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+<div class="modal fade" id="signalRModal" tabindex="-1" aria-labelledby="signalRModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <form id="signalRCoachForm" class="modal-content">
+                <div class="modal-header">
+                    <h2 id="signalRModalLabel" class="modal-title fs-5">SignalR Create</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="signalRFormError" class="text-danger" role="alert"></p>
+                    <input id="srCoachThaiNhid" type="hidden" value="0" />
+                    <div class="row g-3">
+                        <div class="col-md-6"><label for="srFullName" class="form-label">Full name</label><input id="srFullName" type="text" class="form-control" maxlength="250" required  /></div>
+                        <div class="col-md-6"><label for="srEmail" class="form-label">Email</label><input id="srEmail" type="email" class="form-control" maxlength="250"   /></div>
+                        <div class="col-md-6"><label for="srPhone" class="form-label">Phone</label><input id="srPhone" type="tel" class="form-control" maxlength="20"   /></div>
+                        <div class="col-md-6"><label for="srDateOfBirth" class="form-label">Date of birth</label><input id="srDateOfBirth" type="date" class="form-control"    /></div>
+                        <div class="col-md-6"><label for="srGender" class="form-label">Gender</label><input id="srGender" type="text" class="form-control" maxlength="10"   /></div>
+                        <div class="col-md-6"><label for="srAddress" class="form-label">Address</label><input id="srAddress" type="text" class="form-control" maxlength="500"   /></div>
+                        <div class="col-md-6"><label for="srImageUrl" class="form-label">Image URL</label><input id="srImageUrl" type="text" class="form-control" maxlength="1000"   /></div>
+                        <div class="col-md-6"><label for="srExperience" class="form-label">Experience</label><input id="srExperience" type="text" class="form-control" maxlength="500"   /></div>
+                        <div class="col-md-6"><label for="srCertification" class="form-label">Certification</label><input id="srCertification" type="text" class="form-control" maxlength="500"   /></div>
+                        <div class="col-md-6"><label for="srSalary" class="form-label">Salary</label><input id="srSalary" type="number" class="form-control"   min="0" step="0.01" /></div>
+                        <div class="col-md-6"><label for="srHireDate" class="form-label">Hire date</label><input id="srHireDate" type="date" class="form-control"    /></div>
+                        <div class="col-md-6"><label for="srStatus" class="form-label">Status</label><input id="srStatus" type="number" class="form-control"    /></div>
+                        <div class="col-md-6"><label for="srPublishDate" class="form-label">Publish date</label><input id="srPublishDate" type="date" class="form-control"    /></div>
+                        <div class="col-md-6"><label for="srSpecialization" class="form-label">Specialization</label><select id="srSpecialization" class="form-select"><option value="">-- Select --</option></select></div>
+                        <div class="col-md-6"><label><input id="srIsActive" type="checkbox" checked /> Active</label></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="btnSignalRSave" type="submit" class="btn btn-success">Create via SignalR</button>
+                </div>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/js/coaches-signalr.js" asp-append-version="true"></script>
     <script src="~/lib/table-pagination.js" asp-append-version="true"></script>
     <script>
         $(function () {

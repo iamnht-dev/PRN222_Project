@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using zCoach.Entities.ThaiNH.Models;
 using zCoach.Services.ThaiNH;
 
-namespace zCoach.RazorWebApp.ThaiNH.Hubs;
+namespace zCoach.MVCWebApp.ThaiNH.Hubs;
 
 [Authorize]
 public class CoachHub : Hub

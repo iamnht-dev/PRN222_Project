@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using zCoach.RazorWebApp.ThaiNH.Hubs;
 using zCoach.Repositories.ThaiNH;
 using zCoach.Repositories.ThaiNH.DBContext;
 using zCoach.Services.ThaiNH;
@@ -14,7 +13,6 @@ builder.Configuration
     .AddCommandLine(args);
 
 builder.Services.AddRazorPages();
-builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -53,6 +51,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
-app.MapHub<CoachHub>("/coachHub");
 
 app.Run();
