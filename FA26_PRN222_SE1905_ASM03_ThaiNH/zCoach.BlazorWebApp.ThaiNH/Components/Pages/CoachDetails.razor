@@ -1,0 +1,63 @@
+@page "/coaches/details/{Id:int}"
+@attribute [Authorize]
+@inject ICoachThaiNhService CoachService
+@inject ILogger<CoachDetails> Logger
+
+<PageTitle>Coach Details - zCoach App</PageTitle>
+<h1>Details</h1>
+<h4>CoachThaiNh</h4>
+<hr />
+
+@if (error is not null)
+{
+    <p class="alert alert-danger" role="alert">@error</p>
+}
+else if (coach is null)
+{
+    <p class="alert alert-warning">Không tìm thấy Coach #@Id.</p>
+}
+else
+{
+    <dl class="row">
+        <dt class="col-sm-2">ID</dt><dd class="col-sm-10">@coach.CoachThaiNhid</dd>
+        <dt class="col-sm-2">Full name</dt><dd class="col-sm-10">@coach.FullName</dd>
+        <dt class="col-sm-2">Email</dt><dd class="col-sm-10">@(coach.Email ?? "-")</dd>
+        <dt class="col-sm-2">Phone</dt><dd class="col-sm-10">@(coach.Phone ?? "-")</dd>
+        <dt class="col-sm-2">Date of birth</dt><dd class="col-sm-10">@(coach.DateOfBirth?.ToString("dd/MM/yyyy") ?? "-")</dd>
+        <dt class="col-sm-2">Gender</dt><dd class="col-sm-10">@(coach.Gender ?? "-")</dd>
+        <dt class="col-sm-2">Address</dt><dd class="col-sm-10">@(coach.Address ?? "-")</dd>
+        <dt class="col-sm-2">Image URL</dt><dd class="col-sm-10 text-break">@(coach.ImageUrl ?? "-")</dd>
+        <dt class="col-sm-2">Experience</dt><dd class="col-sm-10">@(coach.Experience ?? "-")</dd>
+        <dt class="col-sm-2">Certification</dt><dd class="col-sm-10">@(coach.Certification ?? "-")</dd>
+        <dt class="col-sm-2">Salary</dt><dd class="col-sm-10">@(coach.Salary?.ToString("N0") ?? "-")</dd>
+        <dt class="col-sm-2">Hire date</dt><dd class="col-sm-10">@(coach.HireDate?.ToString("dd/MM/yyyy") ?? "-")</dd>
+        <dt class="col-sm-2">Status</dt><dd class="col-sm-10">@(coach.Status?.ToString() ?? "-")</dd>
+        <dt class="col-sm-2">Publish date</dt><dd class="col-sm-10">@(coach.PublishDate?.ToString("dd/MM/yyyy") ?? "-")</dd>
+        <dt class="col-sm-2">Updated</dt><dd class="col-sm-10">@(coach.UpdateAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-")</dd>
+        <dt class="col-sm-2">Specialization</dt><dd class="col-sm-10">@(coach.SpecializationThaiNh?.SpecializationName ?? "-")</dd>
+        <dt class="col-sm-2">Active</dt><dd class="col-sm-10">@(coach.IsActive ? "Yes" : "No")</dd>
+    </dl>
+}
+
+<a href="coaches">Back to List</a>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private CoachThaiNh? coach;
+    private string? error;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        coach = null;
+        error = null;
+        try
+        {
+            coach = await CoachService.GetByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load Coach details for {CoachId}", Id);
+            error = "Không tải được thông tin Coach. Vui lòng thử lại.";
+        }
+    }
+}

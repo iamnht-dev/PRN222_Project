@@ -4,10 +4,16 @@ namespace zCoach.Entities.ThaiNH.Models;
 public partial class CoachThaiNh
 {
     public int CoachThaiNhid { get; set; }
-    [Required, StringLength(250), Display(Name = "Full name")]
+    [Required(ErrorMessage = "Full name is required.")]
+    [StringLength(250)]
+    [Display(Name = "Full name")]
     public string FullName { get; set; } = string.Empty;
-    [EmailAddress, StringLength(250)] public string? Email { get; set; }
-    [Phone, StringLength(20)] public string? Phone { get; set; }
+    [StringLength(250)]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Email must contain a valid @ and domain (example: coach@example.com).")]
+    public string? Email { get; set; }
+    [StringLength(20)]
+    [RegularExpression(@"^0\d{9}$", ErrorMessage = "Phone must start with 0 and contain exactly 10 digits.")]
+    public string? Phone { get; set; }
     [DataType(DataType.Date)] public DateOnly? DateOfBirth { get; set; }
     [StringLength(10)] public string? Gender { get; set; }
     [StringLength(500)] public string? Address { get; set; }

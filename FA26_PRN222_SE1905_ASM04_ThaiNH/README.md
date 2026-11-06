@@ -14,7 +14,7 @@ Mặc định chỉ đọc SQL và ghi file; không tự sửa trạng thái Coa
 
 `zCoach.WorkerService.ThaiNH\bin\Debug\net8.0\Logs\ThaiNH_SE1905_WS.txt`
 
-Mỗi dòng gồm timestamp và JSON danh sách Coach. Đóng/mở lại hoặc tải lại Notepad để thấy dòng mới. Thêm/sửa một Coach bằng web app, chờ lượt kế tiếp để thấy dữ liệu cập nhật trong file. Dừng worker trước khi Rebuild.
+Mỗi lượt ghi là một khối có tiêu đề, thời gian `dd/MM/yyyy HH:mm:ss.fff +07:00`, số lượng Coach và JSON được xuống dòng/thụt lề. Thời gian đầu khối là giờ ghi log; các ngày trong Coach là dữ liệu SQL. Đóng/mở lại hoặc tải lại Notepad để thấy dòng mới. Thêm/sửa một Coach bằng web app, chờ lượt kế tiếp để thấy dữ liệu cập nhật trong file. Dừng worker trước khi Rebuild.
 
 ## 2. Publish
 

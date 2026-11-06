@@ -1,25 +1,24 @@
 # ASM01 — Coach MVC + SignalR
 
-Kiến trúc Entities → Repositories → Services → MVCWebApp. Giữ UI Coach Roster/login của ThaiNH; tích hợp CoachHub để CRUD realtime và đồng bộ giữa các cửa sổ.
+Entities → Repositories → Services → MVCWebApp. Chọn zCoach.MVCWebApp.ThaiNH làm Startup Project trong Visual Studio Community, Ctrl+F5, đăng nhập rồi vào Coaches (/Coaches/Index).
 
-Visual Studio Community: mở solution `.slnx`, chọn `zCoach.MVCWebApp.ThaiNH` làm Startup Project, Ctrl+F5. Đăng nhập với tài khoản SQL đang hoạt động rồi vào Coaches (`/Coaches/Index`).
+## Giao diện CRUD
 
-```powershell
-dotnet build FA26_PRN222_SE1905_ASM01_ThaiNH.slnx
-dotnet run --project zCoach.MVCWebApp.ThaiNH --no-launch-profile --urls http://localhost:5171
-```
+Mỗi chức năng có một nút chung: Create New Coach, Edit, Delete. Mở form/hộp xác nhận rồi chọn:
 
-## Demo SignalR
+- Create / Edit / Delete: gửi HTTP POST tới MVC, tải lại trang ở tab thao tác. Tab khác giữ nguyên; phải F5 mới thấy dữ liệu mới. Controller không phát thông báo SignalR.
+- Create by SignalR / Edit by SignalR / Delete by SignalR: gọi CoachHub qua kết nối hiện có. Server đẩy CoachChanged kèm dữ liệu/ID; cả hai tab cập nhật trực tiếp bảng, không reload hay gửi HTTP request lấy lại danh sách.
 
-1. Mở hai cửa sổ cùng bài ASM01, đăng nhập và vào Coaches. Có thể dùng cùng một tài khoản. Đợi `Live updates connected.`.
-2. Xoá bộ lọc ở cả hai. Cửa sổ A: SignalR Create → nhập tên Coach demo, chọn chuyên môn → Create via SignalR.
-3. Cửa sổ B nhận thông báo CoachChanged và tự tải lại sau khoảng 0,7 giây, không cần F5. Kiểm tra trang phân trang nếu chưa thấy bản ghi.
-4. SignalR Edit → đổi tên/lương → Update via SignalR; cửa sổ B cập nhật theo.
-5. SignalR Delete trên Coach demo → xác nhận; cả hai cửa sổ cập nhật.
-6. Create/Edit/Delete bằng form MVC thường cũng gửi CoachChanged cho các cửa sổ đang mở roster. Details, search ba tiêu chí, phân trang và logout giữ nguyên.
+Details, tìm kiếm ba tiêu chí, phân trang, validation và login/logout giữ nguyên. Form MVC có antiforgery token; Hub yêu cầu đăng nhập. Cấu hình máy cá nhân nằm trong appsettings.Local.json (không đưa lên Git).
 
-Hub `/coachHub` yêu cầu đăng nhập, dùng service/repository để đọc ghi SQL. Client gọi GetAll/GetById/GetSpecializations/Create/Update/Delete. Đây là SignalR CRUD; không có màn hình chat.
+## Demo hai tab và Network
 
-Cấu hình máy cá nhân nằm trong `appsettings.Local.json` (không đưa lên Git). Cookie ASM01 riêng với ASM02.
+1. Mở hai cửa sổ, đăng nhập và vào Coaches, chờ Live updates connected.
+2. Thao tác Create/Edit/Delete thường ở tab A: tab B không đổi. F5 tab B mới thấy kết quả.
+3. Sau khi tải xong, mở Network ở cả hai tab và Clear.
+4. Dùng Create/Edit/Delete by SignalR: cả hai tab tự đổi bảng, không thêm request document/fetch/XHR lấy danh sách. Xem thông điệp trong kết nối WS → Messages.
+5. Ảnh ImageUrl ngoài có thể tải tài nguyên ảnh riêng, không phải HTTP CRUD.
 
-Kiểm tra: build 0 warning/error; hai client WebSocket đăng nhập, CRUD SQL, broadcast, validation, DateOnly, search và chặn anonymous đã qua. HTTP CRUD MVC cũng gửi đủ ba thông báo tới client thứ hai. Bản ghi thử đã xoá, không reset database. Chưa kiểm tra click/modal bằng trình duyệt tự động. Dừng app trước khi Rebuild để tránh khóa DLL.
+Đã build 0 warning/error và kiểm tra trên hai cửa sổ Edge đủ sáu lựa chọn: luồng thường phải F5 ở tab nhận; luồng SignalR cập nhật trực tiếp không HTTP request trong CRUD mẫu. Đã kiểm tra SQL, WebSocket, validation và chặn anonymous; xoá dữ liệu thử sau kiểm tra.
+
+Trang Details cũng kết nối CoachHub: khi tab khác Edit by SignalR, các trường của Coach đang xem tự cập nhật; khi Delete by SignalR, ẩn thông tin cũ và hiện thông báo đã xoá. Đã kiểm tra Details mở sẵn cập nhật tên/địa chỉ/lương và trạng thái xoá mà không F5 hoặc HTTP request mới. CRUD thường vẫn không broadcast.

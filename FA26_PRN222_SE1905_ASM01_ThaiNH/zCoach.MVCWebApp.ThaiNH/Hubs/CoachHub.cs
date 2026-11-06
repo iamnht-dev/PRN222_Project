@@ -37,7 +37,7 @@ public class CoachHub : Hub
         try
         {
             var created = await _coaches.CreateAsync(coach);
-            await BroadcastChangedAsync("created", created.FullName);
+            await BroadcastChangedAsync("created", created.CoachThaiNhid, created.FullName);
             return created.CoachThaiNhid;
         }
         catch (ValidationException ex) { throw new HubException(ex.Message); }
@@ -50,7 +50,7 @@ public class CoachHub : Hub
         try
         {
             if (!await _coaches.UpdateAsync(coach)) throw new HubException("Coach was not found.");
-            await BroadcastChangedAsync("updated", coach.FullName);
+            await BroadcastChangedAsync("updated", coach.CoachThaiNhid, coach.FullName);
             return true;
         }
         catch (ValidationException ex) { throw new HubException(ex.Message); }
@@ -60,14 +60,22 @@ public class CoachHub : Hub
     {
         var coach = await _coaches.GetByIdAsync(id) ?? throw new HubException("Coach was not found.");
         if (!await _coaches.DeleteAsync(id)) throw new HubException("Coach was not found.");
-        await BroadcastChangedAsync("deleted", coach.FullName);
+        await BroadcastChangedAsync("deleted", id, coach.FullName);
         return true;
     }
 
-    private Task BroadcastChangedAsync(string action, string fullName)
-        => Clients.All.SendAsync("CoachChanged", new { Action = action, FullName = fullName, ChangedAt = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy") });
+    private async Task BroadcastChangedAsync(string action, int id, string fullName)
+    {
+        var item = action == "deleted" ? null : await _coaches.GetByIdAsync(id);
+        await Clients.All.SendAsync("CoachChanged", new
+        {
+            Action = action, CoachThaiNhid = id, FullName = fullName,
+            Coach = item is null ? null : MapItem(item),
+            ChangedAt = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy")
+        });
+    }
 
-    private static object MapItem(CoachThaiNh coach) => new
+    internal static object MapItem(CoachThaiNh coach) => new
     {
         coach.CoachThaiNhid, coach.FullName, coach.Email, coach.Phone,
         DateOfBirth = coach.DateOfBirth?.ToString("yyyy-MM-dd"),

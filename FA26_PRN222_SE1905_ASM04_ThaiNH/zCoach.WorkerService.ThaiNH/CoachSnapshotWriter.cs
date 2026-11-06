@@ -11,6 +11,7 @@ public sealed class CoachSnapshotWriter
     private readonly WorkerOptions _options;
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
+        WriteIndented = true,
         ReferenceHandler = ReferenceHandler.IgnoreCycles,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
@@ -22,6 +23,13 @@ public sealed class CoachSnapshotWriter
     {
         Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);
         var json = JsonSerializer.Serialize(coaches, JsonOptions);
-        await File.AppendAllTextAsync(FilePath, $"{DateTimeOffset.Now:O}: {json}{Environment.NewLine}", Encoding.UTF8, cancellationToken);
+        var timestamp = DateTimeOffset.Now;
+        var entry = $"{new string('=', 72)}{Environment.NewLine}"
+            + $"THAI NH - COACH WINDOWS SERVICE{Environment.NewLine}"
+            + $"Thoi gian ghi log: {timestamp:dd/MM/yyyy HH:mm:ss.fff zzz}{Environment.NewLine}"
+            + $"So luong Coach: {coaches.Count}{Environment.NewLine}"
+            + $"{new string('-', 72)}{Environment.NewLine}"
+            + json + Environment.NewLine + Environment.NewLine;
+        await File.AppendAllTextAsync(FilePath, entry, Encoding.UTF8, cancellationToken);
     }
 }

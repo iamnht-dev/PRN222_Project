@@ -42,12 +42,13 @@
 
 @if (showForm)
 {
-    <div class="mb-4">
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+    <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+        <div class="modal-header">
             <h2 class="h5 mb-0">@(editing ? $"Edit #{model.CoachThaiNhid}" : "Create Coach")</h2>
             <button type="button" class="btn-close" @onclick="CloseForm" aria-label="Close"></button>
         </div>
-        <div class="row"><div class="col-md-4">
+        <div class="modal-body">
             <EditForm Model="model" OnValidSubmit="SaveAsync">
                 <DataAnnotationsValidator />
                 <div class="text-danger mb-2">
@@ -74,8 +75,13 @@
                     <button type="button" class="btn btn-outline-secondary" @onclick="CloseForm">Cancel</button>
                 </div>
             </EditForm>
-        </div></div>
-    </div>
+        </div></div></div>
+    </div><div class="modal-backdrop fade show"></div>
+}
+
+@if (deleteTarget is not null)
+{
+    <div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-5">Delete Coach</h2><button type="button" class="btn-close" @onclick="CloseDelete" aria-label="Close"></button></div><div class="modal-body"><p class="mb-0">Xoá Coach #@deleteTarget.CoachThaiNhid của "@deleteTarget.FullName"?</p></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" @onclick="CloseDelete">Cancel</button><button type="button" class="btn btn-danger" @onclick="ConfirmDeleteAsync">Delete</button></div></div></div></div><div class="modal-backdrop fade show"></div>
 }
 
 <div>
@@ -109,8 +115,9 @@
                                             @onclick="() => ShowForm(item)">
                                         Edit
                                     </button>
+                                    <a href="@($"coaches/details/{item.CoachThaiNhid}")" class="btn btn-sm btn-outline-info">Details</a>
                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                            @onclick="() => DeleteAsync(item)">
+                                            @onclick="() => ShowDelete(item)">
                                         Delete
                                     </button>
                                 </div>
@@ -144,6 +151,7 @@
     private CoachThaiNh model = new();
     private bool showForm;
     private bool editing;
+    private CoachThaiNh? deleteTarget;
     private bool needsPagination;
     private string? fullName;
     private string? email;
@@ -286,16 +294,14 @@
         }
     }
 
-    private async Task DeleteAsync(CoachThaiNh item)
-    {
-        var confirmed = await JS.InvokeAsync<bool>(
-            "confirm",
-            $"Xoá Coach #{item.CoachThaiNhid} của \"{item.FullName}\"?");
+    private void ShowDelete(CoachThaiNh item) => deleteTarget = item;
 
-        if (!confirmed)
-        {
-            return;
-        }
+    private void CloseDelete() => deleteTarget = null;
+
+    private async Task ConfirmDeleteAsync()
+    {
+        if (deleteTarget is null) return;
+        var item = deleteTarget;
 
         try
         {
@@ -304,6 +310,7 @@
             {
                 message = $"Đã xoá Coach #{item.CoachThaiNhid}.";
                 isError = false;
+                deleteTarget = null;
                 await SearchAsync();
             }
             else
